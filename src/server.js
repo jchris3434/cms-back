@@ -1,8 +1,9 @@
 const express = require('express');
 const app = express();
-const PORT = 12000;
 const cors = require('cors');
-const db = require('./config/database');
+require('dotenv').config();
+const dbConfig = require('./config/database');
+const port = process.env.PORT;
 const accessRoutes = require('./routes/access-routes');
 const componentsRoutes = require('./routes/components-routes');
 const contentsRoutes = require('./routes/contents-routes');
@@ -11,7 +12,8 @@ const pagesRoutes = require('./routes/pages-routes');
 const projectsRoutes = require('./routes/projects-routes');
 const rolesRoutes = require('./routes/roles-routes');
 const usersRoutes = require('./routes/users-routes');
-const connectDatabase = require('./config/database');
+
+dbConfig.databaseConnection();
 
 app.use("/", (req, res) => {
     res.send("Bonjour monde");
@@ -27,9 +29,13 @@ app.use(express.json());
 // app.use('/roles', rolesRoutes);
 // app.use('/users', usersRoutes);
 
-db.sequelize.sync().then(() => {
-    console.log('Connexion à la base de données réussie et modèles synchronisés.');
-    app.listen(PORT, () => console.log(`App running on port ${PORT}`));
-}).catch(err => {
-    console.error('Erreur lors de la synchronisation avec la base de données:', err);
-});
+// function databaseConnection () {
+// db.sequelize.sync().then(() => {
+//     console.log('Connexion à la base de données réussie et modèles synchronisés.');
+//     app.listen(PORT, () => console.log(`App running on port ${PORT}`));
+// }).catch(err => {
+//     console.error('Erreur lors de la synchronisation avec la base de données:', err);
+// });
+// }
+
+app.listen(port, () => console.log(`App running on port ${port}`));
