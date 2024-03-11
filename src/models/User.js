@@ -16,13 +16,21 @@ module.exports = (sequelize, DataTypes) => {
     },
     fk_rol_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
-    }
+      allowNull: false,
+      references: {
+        model: 'roles',
+        key: 'rol_id'
+      }
+    },
   }, {
     sequelize,
     modelName: 'User',
     tableName: 'users'
   });
+
+  // Foreign key to Role
+  const Role = require('./Role')(sequelize, DataTypes);
+  User.belongsTo(Role, {foreignKey: 'fk_rol_id', as: 'role'});
 
   return User;
 };
