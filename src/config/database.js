@@ -40,7 +40,7 @@ const Access = require("../models/Access")(sequelize, Sequelize.DataTypes);
 
 // 
 function databaseConnection() {
-  sequelize.sync({force: true}).then(() => {
+  sequelize.sync().then(() => {
     console.log('Connexion à la base de données réussie et modèles synchronisés.');
   }).catch(err => {
     console.error('Erreur lors de la synchronisation avec la base de données:', err);

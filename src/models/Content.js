@@ -20,17 +20,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.JSON,
         allowNull: false,
       },
-      cnt_classTemplate: {
-        type: DataTypes.JSON,
-        allowNull: false,
-      },
       cnt_parent: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
       fk_med_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "medias",
           key: "med_id",
@@ -57,8 +53,27 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "Content",
       tableName: "contents",
+      indexes: [
+        {
+          unique: false,
+          fields: ["fk_med_id"],
+        },
+        {
+          unique: false,
+          fields: ["fk_pag_id"],
+        },
+        {
+          unique: false,
+          fields: ["fk_cpn_id"],
+        },
+        {
+          unique: false,
+          fields: ["cnt_parent"],
+        },
+      ],
     }
   );
+
   //autoreference to Content table
   Content.belongsTo(Content, { foreignKey: "cnt_parent", as: "parent" });
   // Foreign key to Media table

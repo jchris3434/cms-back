@@ -25,7 +25,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Media',
-    tableName: 'medias'
+    tableName: 'medias',
+    indexes: [
+      {
+        unique: false,
+        fields: ['fk_prj_id']
+      }
+    ]
   });
 
   const Project = require('./Project')(sequelize, DataTypes);

@@ -29,6 +29,16 @@ module.exports = (sequelize, DataTypes) => {
         sequelize,
         modelName: "Access",
         tableName: "accesses",
+        indexes: [
+          {
+            unique: false,
+            fields: ['fk_prj_id'],
+          },
+          {
+            unique: false,
+            fields: ['fk_usr_id'],
+          }
+        ]
       }
     );
     
@@ -38,6 +48,6 @@ module.exports = (sequelize, DataTypes) => {
     // Foreign key to User table
     const User = require('./User')(sequelize, DataTypes);
     Access.belongsTo(User, {foreignKey: 'fk_usr_id', as: 'user'});
+
     return Access;
-  };
-  
+};

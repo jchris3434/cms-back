@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     usr_id: {
@@ -12,7 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     usr_password: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      set(value) {
+        const hashedPassword = bcrypt.hashSync(value, SALT_ROUNDS);
+        this.setDataValue('usr_password', hashedPassword);
+      }
     },
     fk_rol_id: {
       type: DataTypes.INTEGER,
@@ -25,7 +31,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
-    tableName: 'users'
+    tableName: 'users',
+    indexes: [
+      {
+        unique: false,
+        fields: ['fk_rol_id']
+      }
+    ]
   });
 
   // Foreign key to Role

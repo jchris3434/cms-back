@@ -30,6 +30,16 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: "Page",
     tableName: "pages",
+    indexes: [
+      {
+        unique: false,
+        fields: ['fk_prj_id']
+      },
+      {
+        unique: false, 
+        fields: ['pag_parent'],
+      }
+    ]
   });
 
   // Autoreference to Page table
