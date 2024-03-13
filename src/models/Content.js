@@ -75,16 +75,16 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   //autoreference to Content table
-  Content.belongsTo(Content, { foreignKey: "cnt_parent", as: "parent" });
+  Content.belongsTo(Content, { foreignKey: "cnt_parent", as: "parent", onDelete: 'CASCADE', onUpdate: 'CASCADE'});
   // Foreign key to Media table
   const Media = require("./Media")(sequelize, DataTypes);
-  Content.belongsTo(Media, { foreignKey: "fk_med_id", as: "media" });
+  Content.belongsTo(Media, { foreignKey: "fk_med_id", as: "media", onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
   // Foreign key to Page table
   const Page = require("./Page")(sequelize, DataTypes);
-  Content.belongsTo(Page, { foreignKey: "fk_pag_id", as: "page" });
+  Content.belongsTo(Page, { foreignKey: "fk_pag_id", as: "page", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
   // Foreign key to Component table
   const Component = require("./Component")(sequelize, DataTypes);
-  Content.belongsTo(Component, { foreignKey: "fk_cpn_id", as: "component" });
+  Content.belongsTo(Component, { foreignKey: "fk_cpn_id", as: "component", onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
 
   return Content;
 };

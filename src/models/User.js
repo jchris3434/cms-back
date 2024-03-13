@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // Foreign key to Role
   const Role = require('./Role')(sequelize, DataTypes);
-  User.belongsTo(Role, {foreignKey: 'fk_rol_id', as: 'role'});
+  User.belongsTo(Role, {foreignKey: 'fk_rol_id', as: 'role', onDelete: 'RESTRICT', onUpdate: 'CASCADE'});
 
   return User;
 };

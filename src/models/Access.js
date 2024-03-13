@@ -44,10 +44,10 @@ module.exports = (sequelize, DataTypes) => {
     
     // Foreign key to Project table
     const Project = require('./Project')(sequelize, DataTypes);
-    Access.belongsTo(Project, {foreignKey: 'fk_prj_id', as: 'project'});
+    Access.belongsTo(Project, {foreignKey: 'fk_prj_id', as: 'project', onDelete: 'CASCADE', onUpdate: 'CASCADE'});
     // Foreign key to User table
     const User = require('./User')(sequelize, DataTypes);
-    Access.belongsTo(User, {foreignKey: 'fk_usr_id', as: 'user'});
+    Access.belongsTo(User, {foreignKey: 'fk_usr_id', as: 'user', onDelete: 'CASCADE', onUpdate: 'CASCADE'});
 
     return Access;
 };

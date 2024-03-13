@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
   const Project = require('./Project')(sequelize, DataTypes);
 
   // Définition de la relation avec Project
-  Media.belongsTo(Project, { foreignKey: 'fk_prj_id' });
+  Media.belongsTo(Project, { foreignKey: 'fk_prj_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
   return Media;
 };

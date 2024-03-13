@@ -43,11 +43,11 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   // Autoreference to Page table
-  Page.belongsTo(Page, {foreignKey: 'pag_parent', as: 'parent'});
+  Page.belongsTo(Page, {foreignKey: 'pag_parent', as: 'parent', onDelete: 'RESTRICT', onUpdate: 'CASCADE'});
 
   // Foreign key to Project table
   const Project = require('./Project')(sequelize, DataTypes);
-  Page.belongsTo(Project, {foreignKey: 'fk_prj_id', as: 'project'});
+  Page.belongsTo(Project, {foreignKey: 'fk_prj_id', as: 'project', onDelete: 'CASCADE', onUpdate: 'CASCADE'});
 
   return Page;
 };
