@@ -1,0 +1,32 @@
+image: node:21
+
+stages:
+  - build
+  - test
+  - deploy
+
+install_dependencies:
+  stage: build
+  script:
+    - npm install
+  artifacts:
+    paths:
+      - node_modules
+  only:
+    - merge_requests
+
+launch_tests:
+  stage: test
+  needs:
+    - install_dependencies
+  script:
+    - npm test
+  only:
+    - merge_requests
+
+deploy_job:
+  stage: deploy
+  script:
+    - echo "NOT IMPLEMENT YET"
+  only:
+    - merge_requests
