@@ -23,7 +23,22 @@ const sequelize = new Sequelize(dbname, dbusername, dbpassword,{
 
 // User model importation
 const User = require("../models/User")(sequelize, Sequelize.DataTypes);
+// Project model importation
+const Project = require("../models/Project")(sequelize, Sequelize.DataTypes);
+// Component model importation
+const Component = require("../models/Component")(sequelize, Sequelize.DataTypes);
+// Page model importation
+const Page = require("../models/Page")(sequelize, Sequelize.DataTypes);
+// Media model importation
+const Media = require("../models/Media")(sequelize, Sequelize.DataTypes);
+// Role model importation
+const Role = require("../models/Role")(sequelize, Sequelize.DataTypes);
+// Content model importation
+const Content = require("../models/Content")(sequelize, Sequelize.DataTypes);
+// Access model importation
+const Access = require("../models/Access")(sequelize, Sequelize.DataTypes);
 
+// 
 function databaseConnection() {
   sequelize.sync().then(() => {
     console.log('Connexion à la base de données réussie et modèles synchronisés.');

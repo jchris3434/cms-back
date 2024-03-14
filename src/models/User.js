@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     usr_id: {
@@ -12,17 +14,35 @@ module.exports = (sequelize, DataTypes) => {
     },
     usr_password: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      set(value) {
+        const hashedPassword = bcrypt.hashSync(value, SALT_ROUNDS);
+        this.setDataValue('usr_password', hashedPassword);
+      }
     },
     fk_rol_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
-    }
+      allowNull: false,
+      references: {
+        model: 'roles',
+        key: 'rol_id'
+      }
+    },
   }, {
     sequelize,
     modelName: 'User',
-    tableName: 'users'
+    tableName: 'users',
+    indexes: [
+      {
+        unique: false,
+        fields: ['fk_rol_id']
+      }
+    ]
   });
+
+  // Foreign key to Role
+  const Role = require('./Role')(sequelize, DataTypes);
+  User.belongsTo(Role, {foreignKey: 'fk_rol_id', as: 'role', onDelete: 'RESTRICT', onUpdate: 'CASCADE'});
 
   return User;
 };
