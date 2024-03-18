@@ -13,18 +13,16 @@ const projectsRoutes = require('./routes/projects-routes');
 const rolesRoutes = require('./routes/roles-routes');
 const usersRoutes = require('./routes/users-routes');
 
-dbConfig.databaseConnection();
-
-app.use("/", (req, res) => {
-    res.send("Bonjour monde");
-});
 app.use(cors());
 app.use(express.json());
+
+dbConfig.databaseConnection();
+
 // app.use('/access', accessRoutes);
 // app.use('/components', componentsRoutes);
 // app.use('/contents', contentsRoutes);
 // app.use('/medias', mediasRoutes);
-// app.use('/pages', pagesRoutes);
+app.use('/pages', pagesRoutes);
 // app.use('/projects', projectsRoutes);
 // app.use('/roles', rolesRoutes);
 // app.use('/users', usersRoutes);
