@@ -39,10 +39,10 @@ const updatePage = async (req, res) => {
         if (!parentPage) {
           return res.status(404).json({ message: 'Parent page not found' });
         } else {
-          url = parentPage.pag_url + "/" + pageName;
+          url = parentPage.pag_url.replace(" ", "_") + "/" + pageName.replace(" ", "_");
         }
       } else {
-        url = "/" + pageName;
+        url = "/" + pageName.replace(" ", "_");
       }
       const pages = await Page.findAll({where: { pag_parent: req.params.id }});
       pages.forEach(async (childPage) => {
@@ -73,20 +73,20 @@ const deletePage = async (req, res) => {
 
 const createPage = async (req, res) => {
   try {
-    const project = await projectController.getProjectById(req.body.fk_prj_id);
-    if (project == null) {
-      return res.status(404).json({ message: 'Project not found' });
-    }
+    // const project = await projectController.getProjectById(req.body.fk_prj_id);
+    // if (project == null) {
+    //   return res.status(404).json({ message: 'Project not found' });
+    // }
     let url = "";
     if (req.body.pag_parent != null) {
       const parentPage = await Page.findByPk(req.body.pag_parent);
       if (!parentPage) {
         return res.status(404).json({ message: 'Parent page not found' });
       } else {
-        url = parentPage.pag_url + "/" + req.body.pag_name;
+        url = parentPage.pag_url.replace(" ", "_") + "/" + req.body.pag_name.replace(" ", "_");
       }
     } else {
-      url = "/" + req.body.pag_name;
+      url = "/" + req.body.pag_name.replace(" ", "_");
     }
     console.log(url);
     req.body.pag_url = url;
@@ -98,7 +98,7 @@ const createPage = async (req, res) => {
 }
 
 async function editUrl(page, newName, oldName) {
-  page.pag_url = page.pag_url.replace(oldName, newName);
+  page.pag_url = page.pag_url.replace(oldName, newName.replace(" ", "_"));
   page.save();
   const pages = await Page.findAll({where: { pag_parent: page.pag_id }});
   pages.forEach(async (childPage) => {
