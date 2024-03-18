@@ -15,27 +15,11 @@ const usersRoutes = require('./routes/users-routes');
 
 dbConfig.databaseConnection();
 
-app.use("/", (req, res) => {
+app.use("home", (req, res) => {
     res.send("Bonjour monde");
 });
 app.use(cors());
 app.use(express.json());
-// app.use('/access', accessRoutes);
-// app.use('/components', componentsRoutes);
-// app.use('/contents', contentsRoutes);
-// app.use('/medias', mediasRoutes);
-// app.use('/pages', pagesRoutes);
-// app.use('/projects', projectsRoutes);
-// app.use('/roles', rolesRoutes);
-// app.use('/users', usersRoutes);
-
-// function databaseConnection () {
-// db.sequelize.sync().then(() => {
-//     console.log('Connexion à la base de données réussie et modèles synchronisés.');
-//     app.listen(PORT, () => console.log(`App running on port ${PORT}`));
-// }).catch(err => {
-//     console.error('Erreur lors de la synchronisation avec la base de données:', err);
-// });
-// }
+app.use('/users', usersRoutes);
 
 app.listen(port, () => console.log(`App running on port ${port}`));

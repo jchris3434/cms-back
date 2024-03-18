@@ -38,13 +38,15 @@ const Content = require("../models/Content")(sequelize, Sequelize.DataTypes);
 // Access model importation
 const Access = require("../models/Access")(sequelize, Sequelize.DataTypes);
 
-// 
-function databaseConnection() {
-  sequelize.sync().then(() => {
+
+async function databaseConnection() {
+  try {
+    await sequelize.sync();
     console.log('Connexion à la base de données réussie et modèles synchronisés.');
-  }).catch(err => {
+  } catch (err) {
     console.error('Erreur lors de la synchronisation avec la base de données:', err);
-  });
+  }
 }
 
-module.exports = { sequelize, databaseConnection };
+
+module.exports = { Sequelize, sequelize, databaseConnection };
