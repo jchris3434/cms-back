@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const SALT_ROUNDS = 10;
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -43,6 +44,5 @@ module.exports = (sequelize, DataTypes) => {
   // Foreign key to Role
   const Role = require('./Role')(sequelize, DataTypes);
   User.belongsTo(Role, {foreignKey: 'fk_rol_id', as: 'role', onDelete: 'RESTRICT', onUpdate: 'CASCADE'});
-
   return User;
 };

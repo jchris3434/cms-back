@@ -13,10 +13,11 @@ const projectsRoutes = require('./routes/projects-routes');
 const rolesRoutes = require('./routes/roles-routes');
 const usersRoutes = require('./routes/users-routes');
 
+dbConfig.databaseConnection();
+
 app.use(cors());
 app.use(express.json());
-
-dbConfig.databaseConnection();
+app.use('/users', usersRoutes);
 
 // app.use('/access', accessRoutes);
 // app.use('/components', componentsRoutes);
@@ -25,15 +26,6 @@ dbConfig.databaseConnection();
 app.use('/pages', pagesRoutes);
 // app.use('/projects', projectsRoutes);
 // app.use('/roles', rolesRoutes);
-// app.use('/users', usersRoutes);
 
-// function databaseConnection () {
-// db.sequelize.sync().then(() => {
-//     console.log('Connexion à la base de données réussie et modèles synchronisés.');
-//     app.listen(PORT, () => console.log(`App running on port ${PORT}`));
-// }).catch(err => {
-//     console.error('Erreur lors de la synchronisation avec la base de données:', err);
-// });
-// }
 
 app.listen(port, () => console.log(`App running on port ${port}`));
