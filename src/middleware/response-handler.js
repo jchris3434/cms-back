@@ -2,8 +2,12 @@ exports.responseHandler = (input, message) => {
   return new Promise((resolve, reject) => {
     if (input === null) {
       console.error("Not Found");
-      return reject(new Error({ status: 404, error: "Not Found", details: "Resource not found" }));
-    } else if (Array.isArray(input) || typeof input === 'object') {
+      return reject({
+        status: 404,
+        error: "Not Found",
+        details: "Resource not found",
+      });
+    } else if (Array.isArray(input) || typeof input === "object") {
       console.log("Success: ", message, input);
       return resolve({ success: true, data: input, message: message });
     } else if (input instanceof Error) {
@@ -14,12 +18,19 @@ exports.responseHandler = (input, message) => {
         status = input.response.status;
         errorMessage = input.response.data.message || errorMessage;
       }
-
       console.error("Error:", errorMessage);
-      return reject(new Error({ status: status, error: "Error processing request", details: errorMessage }));
+      return reject({
+        status: status,
+        error: "Error processing request",
+        details: errorMessage,
+      });
     } else {
       console.error("Unhandled scenario:", input);
-      return reject(new Error({ status: 500, error: "Unhandled scenario", details: input }));
+      return reject({
+        status: 500,
+        error: "Unhandled scenario",
+        details: input,
+      });
     }
   });
 };
