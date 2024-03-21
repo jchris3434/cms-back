@@ -149,8 +149,8 @@ const deleteUser = async (req, res) => {
 
 /**
  * Attempt to log a user in with their credentials
- * @param {string} username - The user's email
- * @param {string} password - The user's password
+ * @param {string} usr_username - The user's name
+ * @param {string} usr_password - The user's password
  * @returns {Promise<string>} - A promise that resolves with the JWT if login is successful
  */
 const loginUser = async (req, res) => {

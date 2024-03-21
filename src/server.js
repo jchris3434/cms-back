@@ -21,5 +21,8 @@ app.use("home", (req, res) => {
 app.use(cors());
 app.use(express.json());
 app.use('/users', usersRoutes);
+app.use('/components', componentsRoutes);
+app.use('/access', accessRoutes);
+app.use('/contents', contentsRoutes);
 
 app.listen(port, () => console.log(`App running on port ${port}`));
