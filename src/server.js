@@ -15,14 +15,17 @@ const usersRoutes = require('./routes/users-routes');
 
 dbConfig.databaseConnection();
 
-app.use("home", (req, res) => {
-    res.send("Bonjour monde");
-});
 app.use(cors());
 app.use(express.json());
 app.use('/users', usersRoutes);
-app.use('/components', componentsRoutes);
-app.use('/access', accessRoutes);
-app.use('/contents', contentsRoutes);
+
+// app.use('/access', accessRoutes);
+// app.use('/components', componentsRoutes);
+// app.use('/contents', contentsRoutes);
+// app.use('/medias', mediasRoutes);
+app.use('/pages', pagesRoutes);
+// app.use('/projects', projectsRoutes);
+// app.use('/roles', rolesRoutes);
+
 
 app.listen(port, () => console.log(`App running on port ${port}`));

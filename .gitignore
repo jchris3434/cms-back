@@ -67,3 +67,5 @@ yarn-error.log*
 # ------------------------------------------------------------
 # Add below your ignored files and folders custom list
 # ------------------------------------------------------------
+
+.scannerwork
