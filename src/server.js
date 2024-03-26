@@ -19,9 +19,9 @@ app.use(cors());
 app.use(express.json());
 app.use('/users', usersRoutes);
 
-// app.use('/access', accessRoutes);
-// app.use('/components', componentsRoutes);
-// app.use('/contents', contentsRoutes);
+app.use('/access', accessRoutes);
+app.use('/components', componentsRoutes);
+app.use('/contents', contentsRoutes);
 // app.use('/medias', mediasRoutes);
 app.use('/pages', pagesRoutes);
 // app.use('/projects', projectsRoutes);
