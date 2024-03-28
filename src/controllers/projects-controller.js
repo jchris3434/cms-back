@@ -1,38 +1,77 @@
-const { sequilize, sequelize } = require('../config/database');
+const { sequelize } = require('../config/database');
 const {DataTypes } = require('sequelize');
 const Project = require('../models/Project')(sequelize, DataTypes);
+const { responseHandler } = require('../middleware/response-handler')
 
 const getAllProjects = async (req,res) => {
     try{
         const projects = await Project.findAll();
-        res.json(projects);
-    } catch (error) {
-        console.error('Error fetching projects:', error);
-    }
+        responseHandler(users, "List of projects successfully retrieved", 200)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));
+    }  catch (error) {
+        responseHandler(error, "Error fetching projects", 500)
+        .then((result) => res.json(result))
+        .catch((error) => {
+          const statusCode = error.status || 400;
+          res.status(statusCode).json(error);    
+        })
+};
 };
 
 
 const getProjectById = async (req, res) => {
     try{
-        const project = await Project.findByPk(req.params.id);
-        res.json(project);
+        const projectId = req.params.id
+        const project = await Project.findByPk(projectId);
+        responseHandler(
+            project,
+            project ? "project found" : "project not found",
+            project ? 200 : 404
+          )
+            .then((result) => res.json(result))
+            .catch((error) => res.status(error.status || 500).json(error));
     } catch (error) {
-        console.error('Error fectching project:', error);
-    }
+        responseHandler(error)
+        .then((result) => res.json(result))
+        .catch((error) => {
+          const statusCode = error.status || 400;
+          res.status(statusCode).json(error);    
+        })
 };
-
+};
 
 const createProject = async (req, res) => {
     try {
+        const projectExists = await checkProjectExists(req.body.prj_name)
+        if (projectExists) {
+            return responseHandler({}, "Project already exists", 400)
+        .then((result) => res.json(result))
+        .catch((error) => res.status(error.status || 500).json(error));
+        }
         const { prj_name, prj_prod } = req.body;
        
         // Créez le projet avec la date de création
         const newProject = await Project.create({ prj_name, prj_prod, createdAt: new Date() });
-        res.status(201).json(newProject);
-    } catch (error) {
-        console.error('Error creating project:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+        responseHandler(user, "Project successfully created")
+      .then((result) => res.json(result))
+      .catch((error) => {
+        const statusCode = error.status || 500;
+        res.status(statusCode).json(error);
+      });
+    }  catch (error) {
+        responseHandler(error)
+        .then((result) => res.json(result))
+        .catch((error) => {
+          const statusCode = error.status || 400;
+          res.status(statusCode).json(error);    
+        })
+};
+};
+
+const checkProjectExists = async (prj_name) => {
+    const project = await  Project.findOne({ where: { prj_name }});
+    return project ? true : false;
 };
 
 
@@ -46,10 +85,14 @@ const updateProject = async (req, res) => {
         const [updatedRowsCount] = await Project.update({ prj_name, prj_prod, updatedAt: new Date() }, { where: { prj_id: projectId } });
 
             res.json({ message: 'Project updated successfully' });
-    } catch (error) {
-        console.error('Error updating project:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+    }  catch (error) {
+        responseHandler(error)
+        .then((result) => res.json(result))
+        .catch((error) => {
+          const statusCode = error.status || 400;
+          res.status(statusCode).json(error);    
+        })
+};
 };
 
 const deleteProject = async (req, res) => {
@@ -60,10 +103,14 @@ const deleteProject = async (req, res) => {
         const deletedRowCount = await Project.destroy({ where: { prj_id: projectId } });
             res.json({ message: 'Project deleted successfully' });
         
-    } catch (error) {
-        console.error('Error deleting project:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+    }  catch (error) {
+        responseHandler(error)
+        .then((result) => res.json(result))
+        .catch((error) => {
+          const statusCode = error.status || 400;
+          res.status(statusCode).json(error);    
+        })
+};
 };
 
 
