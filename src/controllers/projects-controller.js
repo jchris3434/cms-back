@@ -6,7 +6,7 @@ const { responseHandler } = require('../middleware/response-handler')
 const getAllProjects = async (req,res) => {
     try{
         const projects = await Project.findAll();
-        responseHandler(users, "List of projects successfully retrieved", 200)
+        responseHandler(projects, "List of projects successfully retrieved", 200)
       .then((result) => res.json(result))
       .catch((error) => res.status(error.status || 500).json(error));
     }  catch (error) {
@@ -53,7 +53,7 @@ const createProject = async (req, res) => {
        
         // Créez le projet avec la date de création
         const newProject = await Project.create({ prj_name, prj_prod, createdAt: new Date() });
-        responseHandler(user, "Project successfully created")
+        responseHandler(newProject, "Project successfully created")
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 500;
@@ -79,12 +79,18 @@ const updateProject = async (req, res) => {
     try {
         const { prj_name, prj_prod } = req.body;
         const projectId = req.params.id;
-
+        const project = await Project.findByPk(projectId);
+        if (!project) {
+          return responseHandler(null, "Project not found", 404)
+            .then((result) => res.json(result))
+            .catch((error) => res.status(error.status || 500).json(error));
+        }
 
         // Mettez à jour le projet avec la date de modification
         const [updatedRowsCount] = await Project.update({ prj_name, prj_prod, updatedAt: new Date() }, { where: { prj_id: projectId } });
-
-            res.json({ message: 'Project updated successfully' });
+        responseHandler(updatedUser, "Project updated successfully", 200)
+        .then((result) => res.json(result))
+        .catch((error) => res.status(error.status || 500).json(error));
     }  catch (error) {
         responseHandler(error)
         .then((result) => res.json(result))
@@ -98,19 +104,23 @@ const updateProject = async (req, res) => {
 const deleteProject = async (req, res) => {
     try {
         const projectId = req.params.id;
+        const project = await Project.findByPk(projectId);
+        if(!project) {
+          return responseHandler(null, "Project not found", 404)
+        .then((result) => res.json(result))
+        .catch((error) => res.status(error.status || 500).json(error));
+        }
 
         // Supprimer le projet
-        const deletedRowCount = await Project.destroy({ where: { prj_id: projectId } });
-            res.json({ message: 'Project deleted successfully' });
-        
-    }  catch (error) {
-        responseHandler(error)
+        await Project.destroy({ where: { prj_id: projectId } });
+        responseHandler({}, "Project successfully deleted", 200)
         .then((result) => res.json(result))
-        .catch((error) => {
-          const statusCode = error.status || 400;
-          res.status(statusCode).json(error);    
-        })
-};
+        .catch((error) => res.status(error.status || 500).json(error));
+    } catch (error) {
+      responseHandler(error, "Error deleting Project", 500)
+        .then((result) => res.json(result))
+        .catch((error) => res.status(error.status || 500).json(error));
+    }
 };
 
 
