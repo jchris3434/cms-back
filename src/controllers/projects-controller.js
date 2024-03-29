@@ -88,7 +88,7 @@ const updateProject = async (req, res) => {
         }
 
         // Mettez à jour le projet avec la date de modification
-        const [updatedRowsCount] = await Project.update({ prj_name, prj_prod, updatedAt: new Date() }, { where: { prj_id: projectId } });
+        const [updatedRowsCount] = await Project.update({ prj_name, prj_prod }, { where: { prj_id: projectId } });
         responseHandler(updatedUser, "Project updated successfully", 200)
         .then((result) => res.json(result))
         .catch((error) => res.status(error.status || 500).json(error));
