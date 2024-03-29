@@ -49,10 +49,11 @@ const createProject = async (req, res) => {
         .then((result) => res.json(result))
         .catch((error) => res.status(error.status || 500).json(error));
         }
-        const { prj_name, prj_prod } = req.body;
+        const { prj_name } = req.body;
+        const prj_prod = req.body.prj_prod || 0;
        
         // Créez le projet avec la date de création
-        const newProject = await Project.create({ prj_name, prj_prod, createdAt: new Date() });
+        const newProject = await Project.create({ prj_name, prj_prod });
         responseHandler(newProject, "Project successfully created")
       .then((result) => res.json(result))
       .catch((error) => {
