@@ -1,15 +1,21 @@
 const { Router } = require('express');
 const router = Router();
 const {getAllProjects, getProjectById, updateProject, deleteProject, createProject } = require('../controllers/projects-controller');
+const { authenticateRole } = require('../middleware/authentication-handler');
 
-router.get("/", getAllProjects);
 
-router.get("/:id", getProjectById);
+const requireAdmin = authenticateRole(1);
+const requireClient = authenticateRole(1 || 2);
 
-router.put("/:id", updateProject);
 
-router.delete("/:id", deleteProject);
+router.get("/", requireAdmin, getAllProjects);
 
-router.post("/", createProject);
+router.get("/:id", requireClient, getProjectById);
+
+router.put("/:id",  requireClient, updateProject);
+
+router.delete("/:id", requireAdmin, deleteProject);
+
+router.post("/",requireAdmin, createProject);
 
 module.exports = router;
