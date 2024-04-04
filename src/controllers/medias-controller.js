@@ -57,32 +57,38 @@ async function getMediaById(req, res) {
  * @param {object} req - The request object containing media data in the body.
  * @param {object} res - The response object used to send back the created media data or error messages.
  */
+
 async function createMedia(req, res) {
   try {
-    // Extracting file information from the request
-    const file = req.file;
+    console.log('Request body:', req.body); // Vérifiez le contenu de req.body
+    console.log('File:', req.file); // Vérifiez le fichier envoyé
 
-    // Save file to the server
-    const filePath = path.join(__dirname, 'uploads', file.originalname);
+    // Extracting file information from the request body
+    const { name, file } = req.body;
+
+    // Exemple de traitement du fichier : enregistrement sur le disque
+    const filePath = path.join(__dirname, '../uploads', file.originalname);
     await fs.promises.writeFile(filePath, file.buffer);
 
     // Creating a new media entry in the database
     const media = await Media.create({
-      med_name: file.originalname,
-      med_type: file.mimetype,
-      med_path: filePath,
-      fk_prj_id: req.body.projectId 
+        med_name: name,
+        med_type: file.mimetype,
+        med_path: filePath,
+        fk_prj_id: req.body.projectId 
     });
     
     // Sending back the created media data
     res.json(media);
-  } catch (error) {
+} catch (error) {
     // Handling errors
-    responseHandler(error, "Error creating file")
-      .then((response) => res.status(response.status).json(response))
-      .catch((err) => res.status(500).json(err));
-  }
+    console.error('Error creating media:', error);
+    res.status(500).json({ error: 'Error creating file' });
 }
+}
+
+
+
 
 /**
  * Fetches all media files.
