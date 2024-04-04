@@ -168,8 +168,17 @@ const loginUser = async (req, res) => {
         .then((result) => res.json(result))
         .catch((error) => res.status(error.status || 500).json(error));
     }
-    const token = jwt.sign({ userId: user.usr_id }, JWT_KEY);
-    res.json({ token });
+  // Extraire le nom du rôle de l'utilisateur
+  const role = await user.getRole();
+  const roleName = role ? role.rol_name : null;
+  console.log(roleName);
+
+  // Créer le token JWT avec le nom du rôle dans le payload
+  const token = jwt.sign({ userId: user.usr_id, roleName }, JWT_KEY);
+  res.json({ token });
+  const dec = jwt.decode(token);
+  console.log(dec);
+
   } catch (error) {
     responseHandler(error, "Error trying to connect user", 500)
       .then((result) => res.json(result))

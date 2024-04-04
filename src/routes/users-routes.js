@@ -4,11 +4,8 @@ const {getAllUsers, getUserById, createUser, updateUser, deleteUser, loginUser} 
 const { authenticateRole } = require('../middleware/authentication-handler');
 
 
-const requireAdmin = authenticateRole(1);
-const requireClient = authenticateRole(1 || 2);
 
-
-router.get('/', requireAdmin, getAllUsers);
+router.get('/', getAllUsers);
 router.get('/:id', getUserById);
 router.post('/', createUser);
 router.put('/:id', updateUser);

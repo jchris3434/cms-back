@@ -4,9 +4,12 @@ const {getAllProjects, getProjectById, updateProject, deleteProject, createProje
 const { authenticateRole } = require('../middleware/authentication-handler');
 
 
-const requireAdmin = authenticateRole(1);
-const requireClient = authenticateRole(1 || 2);
+// Importez les rôles appropriés depuis le fichier où ils sont définis
+const { Admin, Client } = require('../models/Role');
 
+// Définissez les exigences de rôle correctement
+const requireAdmin = authenticateRole([Admin]);
+const requireClient = authenticateRole([Admin, Client]);
 
 router.get("/", requireAdmin, getAllProjects);
 

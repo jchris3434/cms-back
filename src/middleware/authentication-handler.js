@@ -7,6 +7,14 @@ const authenticateRole = (role) => {
   return (req, res, next) => {
     // Récupérer le token JWT depuis le header Authorization
     const token = req.headers.authorization;
+    console.log(token);
+    const dec = jwt.decode(token, JWT_KEY);
+    console.log(dec);
+     // Décoder le token JWT
+    //  const verif = jwt.verify(token, JWT_KEY);
+    //  console.log(verif);
+
+    // console.log(dec.roleName);
 
     if (!token) {
       // Si aucun token n'est fourni, renvoyer une erreur d'authentification
@@ -18,9 +26,10 @@ const authenticateRole = (role) => {
     try {
       // Vérifier et décoder le token JWT
       const decoded = jwt.verify(token, JWT_KEY);
+    
 
       // Vérifier si le rôle décodé correspond au rôle requis
-      if (decoded.userRole !== role) {
+      if (!role.includes(decoded.roleName)) {
         // Si le rôle n'est pas autorisé, renvoyer une erreur d'autorisation
         return responseHandler(null, 'Unauthorized', 403)
           .then((result) => res.status(403).json(result))
