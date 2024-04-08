@@ -22,7 +22,7 @@ const createUser = async (req, res) => {
         .catch((error) => res.status(error.status || 500).json(error));
     }
     const user = await User.create(req.body);
-    responseHandler(user, "User successfully created")
+    responseHandler(user, "User successfully created", 200)
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 500;
@@ -46,7 +46,7 @@ const createUser = async (req, res) => {
 
 const checkUserExists = async (usr_username) => {
   const user = await User.findOne({ where: { usr_username } });
-  return user ? true : false;
+  return user;
 };
 
 

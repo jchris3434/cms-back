@@ -72,7 +72,7 @@ const createProject = async (req, res) => {
 
 const checkProjectExists = async (prj_name) => {
     const project = await  Project.findOne({ where: { prj_name }});
-    return project ? true : false;
+    return project;
 };
 
 
