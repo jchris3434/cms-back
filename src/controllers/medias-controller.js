@@ -10,19 +10,20 @@ const { responseHandler } = require("../middleware/response-handler");
  * @param {object} req - The request object.
  * @param {object} res - The response object used to send back the media files or error messages.
  */
-
 async function getAllMedia(req, res) {
   try {
     // Fetching all media files from the database
     const files = await Media.findAll();
     
     // Sending back the fetched media files
-    res.json(files);
+    responseHandler(files, "List of media files successfully retrieved", 200)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));
   } catch (error) {
     // Handling errors
-    responseHandler(error, "Error fetching all files")
-      .then((response) => res.status(response.status).json(response))
-      .catch((err) => res.status(500).json(err));
+    responseHandler(error, "Error fetching all media files", 500)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));
   }
 }
 
@@ -31,7 +32,6 @@ async function getAllMedia(req, res) {
  * @param {object} req - The request object, containing the Media ID in the params.
  * @param {object} res - The response object used to send back the Media data or error messages.
  */
-
 async function getMediaById(req, res) {
   try {
     // Finding the media by its ID
@@ -39,16 +39,20 @@ async function getMediaById(req, res) {
     
     // If media is not found, return a 404 error
     if (!media) {
-      return res.status(404).json({ message: 'Media not found' });
+      return responseHandler(null, "Media not found", 404)
+        .then((result) => res.json(result))
+        .catch((error) => res.status(error.status || 500).json(error));
     }
     
     // Sending back the fetched media data
-    res.json(media);
+    responseHandler(media, "Media found", 200)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));
   } catch (error) {
     // Handling errors
-    responseHandler(error, "Error fetching file by ID")
-      .then((response) => res.status(response.status).json(response))
-      .catch((err) => res.status(500).json(err));
+    responseHandler(error, "Error fetching media file by ID", 500)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));
   }
 }
 
@@ -57,10 +61,8 @@ async function getMediaById(req, res) {
  * @param {object} req - The request object containing media data in the body.
  * @param {object} res - The response object used to send back the created media data or error messages.
  */
-
 async function createMedia(req, res) {
   try {
-
     // Extracting file information from the request body
     const { name, file } = req.body;
 
@@ -70,20 +72,22 @@ async function createMedia(req, res) {
 
     // Creating a new media entry in the database
     const media = await Media.create({
-        med_name: name,
-        med_type: file.mimetype,
-        med_path: filePath,
-        fk_prj_id: req.body.projectId 
+      med_name: name,
+      med_type: file.mimetype,
+      med_path: filePath,
+      fk_prj_id: req.body.projectId 
     });
     
     // Sending back the created media data
-    res.json(media);
-} catch (error) {
-  // Handling errors
-  responseHandler(error, "Error creating media")
-    .then((response) => res.status(response.status).json(response))
-    .catch((err) => res.status(500).json(err));
-}
+    responseHandler(media, "Media file successfully created", 200)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));
+  } catch (error) {
+    // Handling errors
+    responseHandler(error, "Error creating media file", 500)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));
+  }
 }
 
 /**
@@ -101,7 +105,9 @@ async function updateMedia(req, res) {
     
     // If media is not found, return a 404 error
     if (!media) {
-      return res.status(404).json({ message: 'Media not found' });
+      return responseHandler(null, "Media file not found", 404)
+        .then((result) => res.json(result))
+        .catch((error) => res.status(error.status || 500).json(error));
     }
     
     // Update file on the server
@@ -122,12 +128,14 @@ async function updateMedia(req, res) {
     });
     
     // Sending back the updated media data
-    res.json(media);
+    responseHandler(media, "Media file updated successfully", 200)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));
   } catch (error) {
     // Handling errors
-    responseHandler(error, "Error updating file")
-      .then((response) => res.status(response.status).json(response))
-      .catch((err) => res.status(500).json(err));
+    responseHandler(error, "Error updating media file", 500)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));
   }
 }
 
@@ -137,34 +145,36 @@ async function updateMedia(req, res) {
  * @param {object} res - The response object used to send back the success message or error messages.
  */
 async function deleteMedia(req, res) {
-    try {
-      // Finding the media by its ID
-      const media = await Media.findByPk(req.params.id);
-      
-      // If media is not found, return a 404 error
-      if (!media) {
-        return res.status(404).json({ message: 'Media not found' });
-      }
-
-      // Delete the file from the server
-      if (fs.existsSync(media.med_path)) {
-        fs.unlinkSync(media.med_path);
-      }
-
-      // Deleting the media entry from the database
-      await media.destroy();
-      
-      // Sending back success message
-      res.json({ message: 'Media removed successfully' });
-    } catch (error) {
-      // Handling errors
-      responseHandler(error, "Error removing file")
-        .then((response) => res.status(response.status).json(response))
-        .catch((err) => res.status(500).json(err));
+  try {
+    // Finding the media by its ID
+    const media = await Media.findByPk(req.params.id);
+    
+    // If media is not found, return a 404 error
+    if (!media) {
+      return responseHandler(null, "Media file not found", 404)
+        .then((result) => res.json(result))
+        .catch((error) => res.status(error.status || 500).json(error));
     }
-  }
 
- 
+    // Delete the file from the server
+    if (fs.existsSync(media.med_path)) {
+      fs.unlinkSync(media.med_path);
+    }
+
+    // Deleting the media entry from the database
+    await media.destroy();
+    
+    // Sending back success message
+    responseHandler({}, "Media file removed successfully", 200)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));
+  } catch (error) {
+    // Handling errors
+    responseHandler(error, "Error removing media file", 500)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));
+  }
+}
 
 // Exporting all controller functions
 module.exports = {
