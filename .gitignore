@@ -69,3 +69,5 @@ yarn-error.log*
 # ------------------------------------------------------------
 
 .scannerwork
+
+.vscode/settings.json

@@ -60,8 +60,6 @@ async function getMediaById(req, res) {
 
 async function createMedia(req, res) {
   try {
-    console.log('Request body:', req.body); // Vérifiez le contenu de req.body
-    console.log('File:', req.file); // Vérifiez le fichier envoyé
 
     // Extracting file information from the request body
     const { name, file } = req.body;
@@ -81,58 +79,11 @@ async function createMedia(req, res) {
     // Sending back the created media data
     res.json(media);
 } catch (error) {
-    // Handling errors
-    console.error('Error creating media:', error);
-    res.status(500).json({ error: 'Error creating file' });
+  // Handling errors
+  responseHandler(error, "Error creating media")
+    .then((response) => res.status(response.status).json(response))
+    .catch((err) => res.status(500).json(err));
 }
-}
-
-
-
-
-/**
- * Fetches all media files.
- * @param {object} req - The request object.
- * @param {object} res - The response object used to send back the media files or error messages.
- */
-async function getAllMedia(req, res) {
-  try {
-    // Fetching all media files from the database
-    const files = await Media.findAll();
-    
-    // Sending back the fetched media files
-    res.json(files);
-  } catch (error) {
-    // Handling errors
-    responseHandler(error, "Error fetching all files")
-      .then((response) => res.status(response.status).json(response))
-      .catch((err) => res.status(500).json(err));
-  }
-}
-
-/**
- * Fetches a Media by its unique identifier.
- * @param {object} req - The request object, containing the Media ID in the params.
- * @param {object} res - The response object used to send back the Media data or error messages.
- */
-async function getMediaById(req, res) {
-  try {
-    // Finding the media by its ID
-    const media = await Media.findByPk(req.params.id);
-    
-    // If media is not found, return a 404 error
-    if (!media) {
-      return res.status(404).json({ message: 'Media not found' });
-    }
-    
-    // Sending back the fetched media data
-    res.json(media);
-  } catch (error) {
-    // Handling errors
-    responseHandler(error, "Error fetching file by ID")
-      .then((response) => res.status(response.status).json(response))
-      .catch((err) => res.status(500).json(err));
-  }
 }
 
 /**
