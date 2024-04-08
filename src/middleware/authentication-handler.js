@@ -20,12 +20,10 @@ const authenticateRole = (role) => {
     try {
       // Vérifier le token JWT
       const verif = jwt.verify(token, JWT_KEY);
-      console.log(verif);
-      console.log(verif.roleName);
       // Vérifier si le rôle décodé correspond au rôle requis
       if (!role.includes(verif.roleName))  {
     // Si le rôle n'est pas autorisé, renvoyer une erreur d'autorisation
-    return responseHandler(null, 'Unauthorized', 403)
+    return responseHandler(null, 'Unauthorized', 401)
     .then((result) => res.status(403).json(result))
     .catch((error) => res.status(500).json(error));
     }
