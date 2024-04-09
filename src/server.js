@@ -10,7 +10,7 @@ const contentsRoutes = require('./routes/contents-routes');
 const mediasRoutes = require('./routes/medias-routes');
 const pagesRoutes = require('./routes/pages-routes');
 const projectsRoutes = require('./routes/projects-routes');
-//const rolesRoutes = require('./routes/roles-routes');
+const rolesRoutes = require('./routes/roles-routes');
 const usersRoutes = require('./routes/users-routes');
 
 dbConfig.databaseConnection();
