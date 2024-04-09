@@ -2,6 +2,7 @@ const { sequelize } = require('../config/database');
 const { DataTypes } = require('sequelize');
 const Page = require("../models/Page")(sequelize, DataTypes);
 const { responseHandler } = require("../middleware/response-handler");
+const { getProjectById } = require('../controllers/projects-controller');
 
 const getAllPages = async (req, res) => {
   try {
@@ -12,7 +13,7 @@ const getAllPages = async (req, res) => {
   } catch (error) {
     responseHandler(error, "Error fetching pages", 500)
       .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      .catch((error) => res.status(error.status || 400).json(error));
   }
 };
 
@@ -29,7 +30,7 @@ const getPageById = async (req, res) => {
   } catch (error) {
     responseHandler(error, "Error fetching page", 500)
       .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      .catch((error) => res.status(error.status || 400).json(error));
   }
 }
 
@@ -77,7 +78,7 @@ const updatePage = async (req, res) => {
   } catch (error) {
     responseHandler(error, "Error updating page", 500)
       .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      .catch((error) => res.status(error.status || 400).json(error));
   }
 }
 
@@ -96,7 +97,7 @@ const deletePage = async (req, res) => {
   } catch (error) {
     responseHandler(error, "Error deleting page", 500)
       .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      .catch((error) => res.status(error.status || 400).json(error));
   }
 }
 
@@ -108,6 +109,12 @@ const createPage = async (req, res) => {
         .then((result) => res.json(result))
         .catch((error) => res.status(error.status || 500).json(error));
     }
+    const project = await getProjectById(req.body.fk_prj_id);
+    if (project == null) {
+      return responseHandler(null, "Projet Page not found", 404)
+      .then((result) => res.json(result))
+      .catch((error) => res.status(error.status || 500).json(error));    }
+
     let url = "";
     if (req.body.pag_parent != null) {
       const parentPage = await Page.findByPk(req.body.pag_parent);
