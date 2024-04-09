@@ -56,7 +56,7 @@ const getRoleById = async (req,res) => {
 
 const checkRoleExists = async (rol_name) => {
     const role = await Role.findOne({ where: { rol_name}});
-    return role ? true : false;
+    return role;
 }
 
 /**
