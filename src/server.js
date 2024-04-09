@@ -25,7 +25,7 @@ app.use('/contents', contentsRoutes);
 // app.use('/medias', mediasRoutes);
 app.use('/pages', pagesRoutes);
 app.use('/projects', projectsRoutes);
-// app.use('/roles', rolesRoutes);
+app.use('/roles', rolesRoutes);
 
 
 app.listen(port, () => console.log(`App running on port ${port}`));
