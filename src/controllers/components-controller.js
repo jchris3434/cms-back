@@ -10,15 +10,21 @@ const { responseHandler } = require("../middleware/response-handler");
  */
 const createComponent = async (req, res) => {
     try {
+        const componentExists = await checkComponentExists(req.body.cpn_name);
+    if (componentExists) {
+      return responseHandler({}, "Component already exists", 400)
+        .then((result) => res.json(result))
+        .catch((error) => res.status(error.status || 500).json(error));
+    }
         const component = await Component.create(req.body);
-        responseHandler(component, "Component successfully created")
+        responseHandler(component, "Component successfully created", 200)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 500;
             res.status(statusCode).json(error);
         });
     } catch (error) {
-        responseHandler(error)
+        responseHandler(error, "Error creating component", 500)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 400;
@@ -26,6 +32,17 @@ const createComponent = async (req, res) => {
         });
     }
 };
+
+/**
+ * Checks if a component exists in the database by their cpn_name.
+ * @param {string} cpn_name - The cpn_name to check for existence.
+ * @returns {Promise<boolean>} - A promise that resolves with true if the component exists, false otherwise.
+ */
+
+const checkComponentExists = async (cpn_name) => {
+    const component = await Component.findOne({ where: { cpn_name } });
+    return component;
+  };
 
 /**
  * Fetches a component by its unique identifier.
@@ -36,14 +53,18 @@ const getComponentById = async (req, res) => {
     try {
         const componentId = req.params.id;
         const component = await Component.findByPk(componentId);
-        responseHandler(component, "Component found")
+        responseHandler(
+            component,
+            component ? "Component found" : "Component not found",
+            component ? 200 : 404
+          )
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 500;
             res.status(statusCode).json(error);
         });
     } catch (error) {
-        responseHandler(error)
+        responseHandler(error, "Error fetching component", 500)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 400;
@@ -60,14 +81,14 @@ const getComponentById = async (req, res) => {
 const getAllComponents = async (req, res) => {
     try {
         const components = await Component.findAll();
-        responseHandler(components, "Components found")
+        responseHandler(components, "Components found", 200)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 500;
             res.status(statusCode).json(error);
         });
     } catch (error) {
-        responseHandler(error)
+        responseHandler(error, "Error fetching components", 500)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 400;
@@ -95,14 +116,14 @@ const updateComponent = async (req, res) => {
             });
         }
         await component.update(updates);
-        responseHandler(component, "Component successfully updated")
+        responseHandler(component, "Component successfully updated", 200)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 500;
             res.status(statusCode).json(error);
         });
     } catch (error) {
-        responseHandler(error)
+        responseHandler(error, "Error updating component", 500)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 400;
@@ -129,14 +150,14 @@ const deleteComponent = async (req, res) => {
             });
         }
         await component.destroy();
-        responseHandler({}, "Component successfully deleted")
+        responseHandler({}, "Component successfully deleted", 200)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 500;
             res.status(statusCode).json(error);
         });
     } catch (error) {
-        responseHandler(error)
+        responseHandler(error, "Error deleting component", 500)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 400;
