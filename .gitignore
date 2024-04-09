@@ -70,4 +70,7 @@ yarn-error.log*
 
 .scannerwork
 
-.vscode/settings.json
+.vscode/
+
+# Dossier de sauvegarde Media sur le serveur
+src/uploads/

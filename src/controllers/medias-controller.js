@@ -64,16 +64,18 @@ async function getMediaById(req, res) {
 async function createMedia(req, res) {
   try {
     // Extracting file information from the request body
-    const { name, file } = req.body;
+    const { name, alt, file } = req.body;
 
     // Exemple de traitement du fichier : enregistrement sur le disque
-    const filePath = path.join(__dirname, '../uploads', file.originalname);
+    const fileName = name.replace(/\s+/g, '-') + path.extname(file.originalname);
+    const filePath = path.join(__dirname, '../uploads', fileName);
     await fs.promises.writeFile(filePath, file.buffer);
 
     // Creating a new media entry in the database
     const media = await Media.create({
       med_name: name,
-      med_type: file.mimetype,
+      med_alt: alt, // Ajout du champ med_alt
+      med_type: file.type, // Utilisation de file.type au lieu de file.mimetype
       med_path: filePath,
       fk_prj_id: req.body.projectId 
     });
@@ -90,6 +92,7 @@ async function createMedia(req, res) {
   }
 }
 
+
 /**
  * Updates a media file.
  * @param {object} req - The request object containing the media file data in the body.
@@ -98,7 +101,7 @@ async function createMedia(req, res) {
 async function updateMedia(req, res) {
   try {
     // Extracting file information from the request
-    const file = req.file;
+    const { name, alt } = req.body;
 
     // Finding the media by its ID
     const media = await Media.findByPk(req.params.id);
@@ -110,20 +113,10 @@ async function updateMedia(req, res) {
         .catch((error) => res.status(error.status || 500).json(error));
     }
     
-    // Update file on the server
-    const filePath = path.join(__dirname, 'uploads', file.originalname);
-    await fs.promises.writeFile(filePath, file.buffer);
-
-    // Delete the old file
-    if (fs.existsSync(media.med_path)) {
-      fs.unlinkSync(media.med_path);
-    }
-
     // Updating media information in the database
     await media.update({
-      med_name: file.originalname,
-      med_type: file.mimetype,
-      med_path: filePath,
+      med_name: name,
+      med_alt: alt,
       fk_prj_id: req.body.projectId 
     });
     
