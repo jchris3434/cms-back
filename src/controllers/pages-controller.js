@@ -111,7 +111,7 @@ const createPage = async (req, res) => {
     }
     const project = await getProjectById(req.body.fk_prj_id);
     if (project == null) {
-      return responseHandler(null, "Projet Page not found", 404)
+      return responseHandler(null, "Project not found", 404)
       .then((result) => res.json(result))
       .catch((error) => res.status(error.status || 500).json(error));    }
 
