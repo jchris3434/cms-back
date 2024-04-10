@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    med_alt: {
+      type: DataTypes.STRING,
+      allowNull: true // Peut être nul, car ce champ peut être optionnel
+    },
     fk_prj_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
