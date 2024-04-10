@@ -32,7 +32,7 @@ const getProjectById = async (req, res) => {
             .then((result) => res.json(result))
             .catch((error) => res.status(error.status || 500).json(error));
     } catch (error) {
-        responseHandler(error)
+      responseHandler(error, "Error fetching project", 500)
         .then((result) => res.json(result))
         .catch((error) => {
           const statusCode = error.status || 400;
@@ -54,14 +54,14 @@ const createProject = async (req, res) => {
        
         // Créez le projet avec la date de création
         const newProject = await Project.create({ prj_name, prj_prod });
-        responseHandler(newProject, "Project successfully created")
+        responseHandler(newProject, "Project successfully created", 200)
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 500;
         res.status(statusCode).json(error);
       });
     }  catch (error) {
-        responseHandler(error)
+      responseHandler(error, "Error creating project", 500)
         .then((result) => res.json(result))
         .catch((error) => {
           const statusCode = error.status || 400;
@@ -93,7 +93,7 @@ const updateProject = async (req, res) => {
         .then((result) => res.json(result))
         .catch((error) => res.status(error.status || 500).json(error));
     }  catch (error) {
-        responseHandler(error)
+      responseHandler(error, "Error updating project", 500)
         .then((result) => res.json(result))
         .catch((error) => {
           const statusCode = error.status || 400;
@@ -120,7 +120,7 @@ const deleteProject = async (req, res) => {
     } catch (error) {
       responseHandler(error, "Error deleting Project", 500)
         .then((result) => res.json(result))
-        .catch((error) => res.status(error.status || 500).json(error));
+        .catch((error) => res.status(error.status || 400).json(error));
     }
 };
 
