@@ -11,14 +11,14 @@ const { responseHandler } = require("../middleware/response-handler");
 const createAccess = async (req, res) => {
     try {
         const access = await Access.create(req.body);
-        responseHandler(access, "Access successfully created", 200)
+        responseHandler(access, "Access successfully created")
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 500;
             res.status(statusCode).json(error);
         });
     } catch (error) {
-        responseHandler(error, "Error creating access", 500)
+        responseHandler(error)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 400;
@@ -36,18 +36,14 @@ const getAccessById = async (req, res) => {
     try {
         const accessId = req.params.id;
         const access = await Access.findByPk(accessId);
-        responseHandler(
-            access,
-            access ? "Access found" : "Access not found",
-            access ? 200 : 404
-          )
+        responseHandler(access, "Access found")
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 500;
             res.status(statusCode).json(error);
         });
     } catch (error) {
-        responseHandler(error, "Error fetching access", 500)
+        responseHandler(error)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 400;
@@ -64,14 +60,14 @@ const getAccessById = async (req, res) => {
 const getAllAccesses = async (req, res) => {
     try {
         const accesses = await Access.findAll();
-        responseHandler(accesses, "Accesses found", 200)
+        responseHandler(accesses, "Accesses found")
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 500;
             res.status(statusCode).json(error);
         });
     } catch (error) {
-        responseHandler(error, "Error fetching accesses", 500)
+        responseHandler(error)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 400;
@@ -99,14 +95,14 @@ const updateAccess = async (req, res) => {
             });
         }
         await access.update(updates);
-        responseHandler(access, "Access successfully updated", 200)
+        responseHandler(access, "Access successfully updated")
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 500;
             res.status(statusCode).json(error);
         });
     } catch (error) {
-        responseHandler(error, "Error updating access", 500)
+        responseHandler(error)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 400;
@@ -133,14 +129,14 @@ const deleteAccess = async (req, res) => {
             });
         }
         await access.destroy();
-        responseHandler({}, "Access successfully deleted", 200)
+        responseHandler({}, "Access successfully deleted")
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 500;
             res.status(statusCode).json(error);
         });
     } catch (error) {
-        responseHandler(error, "Error deleting access", 500)
+        responseHandler(error)
         .then((result) => res.json(result))
         .catch((error) => {
             const statusCode = error.status || 400;
@@ -156,3 +152,5 @@ module.exports = {
     updateAccess,
     deleteAccess,
 };
+
+

@@ -10,38 +10,21 @@ const { responseHandler } = require("../middleware/response-handler");
  */
 const createContent = async (req, res) => {
   try {
-    const contentExists = await checkContentExists(req.body.cnt_name);
-    if (contentExists) {
-      return responseHandler({}, "Content already exists", 400)
-        .then((result) => res.json(result))
-        .catch((error) => res.status(error.status || 500).json(error));
-    }
     const content = await Content.create(req.body);
-    responseHandler(content, "Content successfully created", 200)
+    responseHandler(content, "Content successfully created")
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 500;
         res.status(statusCode).json(error);
       });
   } catch (error) {
-    responseHandler(error, "Error creating content", 500)
+    responseHandler(error)
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 400;
         res.status(statusCode).json(error);
       });
   }
-};
-
-/**
- * Checks if a content exists in the database by their cnt_name.
- * @param {string} cnt_name - The cnt_name to check for existence.
- * @returns {Promise<boolean>} - A promise that resolves with true if the content exists, false otherwise.
- */
-
-const checkContentExists = async (cnt_name) => {
-  const content = await Content.findOne({ where: { cnt_name } });
-  return content;
 };
 
 /**
@@ -53,18 +36,14 @@ const getContentById = async (req, res) => {
   try {
     const contentId = req.params.id;
     const content = await Content.findByPk(contentId);
-    responseHandler(
-      content,
-      content ? "Content found" : "Content not found",
-      content ? 200 : 404
-    )
+    responseHandler(content, "Content found")
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 500;
         res.status(statusCode).json(error);
       });
   } catch (error) {
-    responseHandler(error, "Error fetching content", 500)
+    responseHandler(error)
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 400;
@@ -81,14 +60,14 @@ const getContentById = async (req, res) => {
 const getAllContents = async (req, res) => {
   try {
     const contents = await Content.findAll();
-    responseHandler(contents, "List of contents successfully retrieved", 200)
+    responseHandler(contents, "Contents found")
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 500;
         res.status(statusCode).json(error);
       });
   } catch (error) {
-    responseHandler(error, "Error fetching contents", 500)
+    responseHandler(error)
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 400;
@@ -116,14 +95,14 @@ const updateContent = async (req, res) => {
         });
     }
     await content.update(updates);
-    responseHandler(content, "Content successfully updated",200)
+    responseHandler(content, "Content successfully updated")
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 500;
         res.status(statusCode).json(error);
       });
   } catch (error) {
-    responseHandler(error, "Error updating content", 500)
+    responseHandler(error)
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 400;
@@ -150,14 +129,14 @@ const deleteContent = async (req, res) => {
         });
     }
     await content.destroy();
-    responseHandler({}, "Content successfully deleted", 200)
+    responseHandler({}, "Content successfully deleted")
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 500;
         res.status(statusCode).json(error);
       });
   } catch (error) {
-    responseHandler(error, "Error deleting Content", 500)
+    responseHandler(error)
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 400;
