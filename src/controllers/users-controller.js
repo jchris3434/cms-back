@@ -22,14 +22,14 @@ const createUser = async (req, res) => {
         .catch((error) => res.status(error.status || 500).json(error));
     }
     const user = await User.create(req.body);
-    responseHandler(user, "User successfully created")
+    responseHandler(user, "User successfully created", 200)
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 500;
         res.status(statusCode).json(error);
       });
   } catch (error) {
-    responseHandler(error)
+    responseHandler(error, "Error creating user", 500)
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 400;
@@ -46,7 +46,7 @@ const createUser = async (req, res) => {
 
 const checkUserExists = async (usr_username) => {
   const user = await User.findOne({ where: { usr_username } });
-  return user ? true : false;
+  return user;
 };
 
 
@@ -69,7 +69,7 @@ const getUserById = async (req, res) => {
   } catch (error) {
     responseHandler(error, "Error fetching user", 500)
       .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      .catch((error) => res.status(error.status || 400).json(error));
   }
 };
 
@@ -87,7 +87,7 @@ const getAllUsers = async (req, res) => {
   } catch (error) {
     responseHandler(error, "Error fetching users", 500)
       .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      .catch((error) => res.status(error.status || 400).json(error));
   }
 };
 
@@ -116,7 +116,7 @@ const updateUser = async (req, res) => {
   } catch (error) {
     responseHandler(error, "Error updating user", 500)
       .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      .catch((error) => res.status(error.status || 400).json(error));
   }
 };
 
@@ -142,7 +142,7 @@ const deleteUser = async (req, res) => {
   } catch (error) {
     responseHandler(error, "Error deleting user", 500)
       .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      .catch((error) => res.status(error.status || 400).json(error));
   }
 };
 
@@ -168,12 +168,20 @@ const loginUser = async (req, res) => {
         .then((result) => res.json(result))
         .catch((error) => res.status(error.status || 500).json(error));
     }
-    const token = jwt.sign({ userId: user.usr_id }, JWT_KEY);
-    res.json({ token });
+  // Extraire le nom du rôle de l'utilisateur
+  const role = await user.getRole();
+  const roleName = role ? role.rol_name : null;
+
+  // Créer le token JWT avec le nom du rôle dans le payload
+  const token = jwt.sign({ userId: user.usr_id, roleName }, JWT_KEY);
+  res.json({ token });
+  responseHandler({}, "User connected", 200)
+  .then((result) => res.json(result))
+  .catch((error) => res.status(error.status || 500).json(error));
   } catch (error) {
     responseHandler(error, "Error trying to connect user", 500)
       .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      .catch((error) => res.status(error.status || 400).json(error));
   }
 };
 

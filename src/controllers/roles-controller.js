@@ -20,7 +20,7 @@ const getAllRoles = async (req,res) => {
     } catch (error) {
         responseHandler(error, "Error fetching roles", 500)
           .then((result) => res.json(result))
-          .catch((error) => res.status(error.status || 500).json(error));
+          .catch((error) => res.status(error.status || 400).json(error));
       }
 };
 
@@ -44,7 +44,7 @@ const getRoleById = async (req,res) => {
     } catch (error) {
         responseHandler(error, "Error fetching role", 500)
           .then((result) => res.json(result))
-          .catch((error) => res.status(error.status || 500).json(error));
+          .catch((error) => res.status(error.status || 400).json(error));
       }
 };
 
@@ -56,7 +56,7 @@ const getRoleById = async (req,res) => {
 
 const checkRoleExists = async (rol_name) => {
     const role = await Role.findOne({ where: { rol_name}});
-    return role ? true : false;
+    return role;
 }
 
 /**
@@ -74,14 +74,14 @@ const createRole = async (req,res) => {
             .catch((error) => res.status(error.status || 500).json(error));
         }
         const role = await Role.create(req.body);
-        responseHandler(role, "Role successfully created")
+        responseHandler(role, "Role successfully created", 200)
       .then((result) => res.json(result))
       .catch((error) => {
         const statusCode = error.status || 500;
         res.status(statusCode).json(error);
       });
     } catch (error) {
-        responseHandler(error)
+        responseHandler(error, "Error creating role", 500)
           .then((result) => res.json(result))
           .catch((error) => {
             const statusCode = error.status || 400;
@@ -113,7 +113,7 @@ const updateRole = async (req,res) => {
     } catch (error) {
     responseHandler(error, "Error updating role", 500)
       .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      .catch((error) => res.status(error.status || 400).json(error));
   }
 };
 
@@ -138,7 +138,7 @@ const deleteRole = async (req,res) => {
     } catch(error) {
         responseHandler(error, "Error deleting role", 500)
         .then((result) => res.json(result))
-        .catch((error) => res.status(error.status || 500).json(error))
+        .catch((error) => res.status(error.status || 400).json(error))
     }
 }
 
