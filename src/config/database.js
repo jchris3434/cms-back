@@ -6,7 +6,7 @@ const dbname = process.env.DBNAME;
 const dbusername = process.env.DBUSERNAME;
 const dbpassword = process.env.DBPASSWORD;
 const dbhost = process.env.DBHOST;
-const port = process.env.PORT;
+const port = process.env.DBPORT;
 
 
 console.log(dbname, dbusername, dbhost);
@@ -17,6 +17,7 @@ const Sequelize = require("sequelize");
 // Seqsuelize instance creation
 const sequelize = new Sequelize(dbname, dbusername, dbpassword,{
   host: dbhost,
+  port: port,
   dialect: "mysql",
   logging: console.log,
 });
@@ -41,10 +42,12 @@ const Access = require("../models/Access")(sequelize, Sequelize.DataTypes);
 
 async function databaseConnection() {
   try {
+    await sequelize.authenticate();
+    console.log('Connexion à la base de données réussie.');
     await sequelize.sync();
-    console.log('Connexion à la base de données réussie et modèles synchronisés.');
+    console.log('Modèles synchronisés.');
   } catch (err) {
-    console.error('Erreur lors de la synchronisation avec la base de données:', err);
+    console.error('Erreur lors de la connexion à la base de données:', err);
   }
 }
 
