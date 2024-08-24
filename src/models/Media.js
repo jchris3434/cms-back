@@ -20,28 +20,26 @@ module.exports = (sequelize, DataTypes) => {
     },
     med_alt: {
       type: DataTypes.STRING,
-      allowNull: true // Peut être nul, car ce champ peut être optionnel
+      allowNull: true
     },
     fk_prj_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,  // Permettre les valeurs NULL
+      defaultValue: 1,
     },
   }, {
     sequelize,
     modelName: 'Media',
     tableName: 'medias',
-    indexes: [
-      {
-        unique: false,
-        fields: ['fk_prj_id']
-      }
-    ]
   });
 
-  const Project = require('./Project')(sequelize, DataTypes);
-
-  // Définition de la relation avec Project
-  Media.belongsTo(Project, { foreignKey: 'fk_prj_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+  Media.associate = (models) => {
+    Media.belongsTo(models.Project, {
+      foreignKey: 'fk_prj_id',
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE',
+    });
+  };
 
   return Media;
 };

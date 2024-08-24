@@ -61,34 +61,49 @@ async function getMediaById(req, res) {
  * @param {object} req - The request object containing media data in the body.
  * @param {object} res - The response object used to send back the created media data or error messages.
  */
+
 async function createMedia(req, res) {
   try {
-    // Extracting file information from the request body
-    const { name, alt, file } = req.body;
+      const { name, alt, projectId } = req.body;
+      const file = req.file;
 
-    // Exemple de traitement du fichier : enregistrement sur le disque
-    const fileName = name.replace(/\s+/g, '-') + path.extname(file.originalname);
-    const filePath = path.join(__dirname, '../uploads', fileName);
-    await fs.promises.writeFile(filePath, file.buffer);
+      if (!file) {
+          return res.status(400).json({ message: 'No file uploaded' });
+      }
 
-    // Creating a new media entry in the database
-    const media = await Media.create({
-      med_name: name,
-      med_alt: alt, // Ajout du champ med_alt
-      med_type: file.type, // Utilisation de file.type au lieu de file.mimetype
-      med_path: filePath,
-      fk_prj_id: req.body.projectId 
-    });
-    
-    // Sending back the created media data
-    responseHandler(media, "Media file successfully created", 200)
-      .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      // Normalisation du nom du fichier
+      const fileName = name.replace(/\s+/g, '-') + path.extname(file.originalname);
+
+      // Construction correcte du chemin du répertoire des uploads
+      const uploadDir = path.resolve(__dirname, '../src/uploads');
+      const filePath = path.join(uploadDir, fileName);
+
+      // Chemin relatif pour le stockage dans la base de données
+      const relativePath = `uploads/${fileName}`;
+
+      console.log('Chemin du fichier temporaire:', file.path);
+      console.log('Chemin du fichier final:', filePath);
+
+      // Déplacer le fichier seulement si le fichier n'existe pas déjà
+      await fs.promises.rename(file.path, filePath);
+
+      // Création de l'entrée du média dans la base de données
+      const media = await Media.create({
+          med_name: name,
+          med_alt: alt,
+          med_type: file.mimetype,
+          med_path: relativePath,  // Enregistrer le chemin relatif
+          fk_prj_id: projectId
+      });
+
+      // Réponse de succès
+      res.status(201).json({
+          message: "Media file successfully created",
+          media
+      });
   } catch (error) {
-    // Handling errors
-    responseHandler(error, "Error creating media file", 500)
-      .then((result) => res.json(result))
-      .catch((error) => res.status(error.status || 500).json(error));
+      console.error('Error creating media file:', error);
+      res.status(500).json({ message: "Error creating media file", error });
   }
 }
 
