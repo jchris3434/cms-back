@@ -71,39 +71,36 @@ async function createMedia(req, res) {
           return res.status(400).json({ message: 'No file uploaded' });
       }
 
-      // Normalisation du nom du fichier
+      // Normalisation of fileName
       const fileName = name.replace(/\s+/g, '-') + path.extname(file.originalname);
 
-      // Construction correcte du chemin du répertoire des uploads
+      // 
       const uploadDir = path.resolve(__dirname, '../src/uploads');
       const filePath = path.join(uploadDir, fileName);
 
-      // Chemin relatif pour le stockage dans la base de données
+      // path for the database
       const relativePath = `uploads/${fileName}`;
 
-      console.log('Chemin du fichier temporaire:', file.path);
-      console.log('Chemin du fichier final:', filePath);
-
-      // Déplacer le fichier seulement si le fichier n'existe pas déjà
+      // Moving file if not already existing
       await fs.promises.rename(file.path, filePath);
 
-      // Création de l'entrée du média dans la base de données
+      // Adding media in database with Sequelize
       const media = await Media.create({
           med_name: name,
           med_alt: alt,
           med_type: file.mimetype,
-          med_path: relativePath,  // Enregistrer le chemin relatif
+          med_path: relativePath,
           fk_prj_id: projectId
       });
 
-      // Réponse de succès
+      // succèss
       res.status(201).json({
-          message: "Media file successfully created",
+          message: "media file successfully created",
           media
       });
   } catch (error) {
       console.error('Error creating media file:', error);
-      res.status(500).json({ message: "Error creating media file", error });
+      res.status(500).json({ message: "error creating media file", error });
   }
 }
 
